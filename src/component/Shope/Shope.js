@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { Link, useLoaderData } from 'react-router-dom';
+import { addToDb, deleteShoppingCart } from '../../utilities/fakedb';
 import Cart from '../Cart/Cart';
 import Product from '../Product/Product';
 import './Shope.css'
 
 const Shope = () => {
-
-    const [products, setProducts] = useState([]);
+    const products = useLoaderData();
     const [cart, setCart] = useState([]);
-
-    useEffect(() => {
-        fetch('products.json')
-            .then(res => res.json())
-            .then(data => setProducts(data))
-    }, []);
 
     const handlerAddToCart = (product) => {
         const newCart = [...cart, product]
         setCart(newCart)
+        addToDb(product.id)
+    }
+
+    const clearCart = () => {
+        setCart([]);
+        deleteShoppingCart();
     }
 
     return (
@@ -33,8 +34,13 @@ const Shope = () => {
             <div className='order-container'>
                 {
                     <Cart
+                        clearCart={clearCart}
                         cart={cart}
-                    ></Cart>
+                    >
+                        <Link to={'/orders'}>
+                            <button>Review Orders</button>
+                        </Link>
+                    </Cart>
                 }
             </div>
         </div>
